@@ -1,86 +1,154 @@
-import Head from "next/head"
-import { metadata } from "../layout"
-
-metadata.title = "Gestión de tareas"
+'use client'
+import { useEffect, useState } from "react"
+import {
+    Button,
+    Container,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Paper,
+    Select,
+    Stack,
+    Table,
+    TableContainer,
+    TableHead,
+    TableRow,
+    TableCell,
+    TableBody,
+    useTheme
+} from "@mui/material"
+import { Subject } from "@/types/Subject"
+import { Course } from "@/types/Course"
+import { SubjectService } from "@/services/SubjectService"
+import { AssignmentPeriod, AssignmentType } from "@/types/Asignment"
+import { GetFilteredAssignments } from "./GetFilteredAssignments"
+import { GradeService } from "@/services/GradeService"
+import { Grade } from "@/types/Grade"
 
 const Assignment = () => {
+    const theme = useTheme();
+    const [subjects, setSubjects] = useState<Subject[]>([])
+    const [grades, setGrades] = useState<Grade[]>([])
+    const [getAssignment, setGetAssignment] = useState<GetFilteredAssignments>({
+        subjectId: 0,
+        gradeId: 0,
+        type: AssignmentType.Normal,
+        period: AssignmentPeriod.First,
+    })
+
+    const getSubjects = async () => {
+        setSubjects(await SubjectService.fetchSubjects())
+    }
+
+    const getGrades = async () => {
+        setGrades(await GradeService.fetchGrades())
+    }
+
+    useEffect(() => {
+        getSubjects()
+        getGrades()
+    }, [])
+
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        console.table(getAssignment)
+    }
+
     return (
-        <>
-            <section className="bg-slate-500 p-4 rounded text-white mb-4">
-                <form className="flex gap-4">
-                    <div>
-                        <label htmlFor="subject" className="block">Materia</label>
-                        <select name="subject" id="subject" className="input-primary">
-                            <option value="">--Seleccione--</option>
-                            <option value="">Matemáticas</option>
-                            <option value="">Español</option>
-                            <option value="">Sociales</option>
-                            <option value="">Artística</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label htmlFor="year" className="block">Grado</label>
-                        <select name="year" id="year" className="input-primary">
-                            <option value="">--Seleccione--</option>
-                            <option value="">3A</option>
-                            <option value="">8B</option>
-                            <option value="">10C</option>
-                            <option value="">6C</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label htmlFor="type" className="block">Tipo</label>
-                        <select name="type" id="type" className="input-primary">
-                            <option value="">--Seleccione--</option>
-                            <option value="">Tipo 1</option>
-                            <option value="">Tipo 2</option>
-                            <option value="">Tipo 3</option>
-                            <option value="">Tipo 4</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label htmlFor="quarter" className="block">Periodo</label>
-                        <select name="quarter" id="quarter" className="input-primary">
-                            <option value="">--Seleccione--</option>
-                            <option value="">1</option>
-                            <option value="">2</option>
-                            <option value="">3</option>
-                            <option value="">4</option>
-                        </select>
-                    </div>
-                </form>
-            </section>
-            <table className='border-separate w-full rounded'>
-                <thead className="bg-slate-800 text-white">
-                    <tr>
-                        <th className="p-4">Nombre del trabajo</th>
-                        <th className="p-4">Porcentaje</th>
-                        <th className="p-4">Periodo</th>
-                        <th className="p-4">Tipo</th>
-                    </tr>
-                </thead>
-                <tbody className="bg-slate-500">
-                    <tr>
-                        <td className="p-4">Trabajo 1</td>
-                        <td className="p-4">20%</td>
-                        <td className="p-4">1</td>
-                        <td className="p-4">Prueba</td>
-                    </tr>
-                    <tr>
-                        <td className="p-4">Trabajo 2</td>
-                        <td className="p-4">30%</td>
-                        <td className="p-4">1</td>
-                        <td className="p-4">Prueba</td>
-                    </tr>
-                    <tr>
-                        <td className="p-4">Trabajo 3</td>
-                        <td className="p-4">50%</td>
-                        <td className="p-4">1</td>
-                        <td className="p-4">Prueba</td>
-                    </tr>
-                </tbody>
-            </table>
-        </>
+        <section>
+            <Container maxWidth='lg'>
+                <Stack spacing={2} direction='row' useFlexGap flexWrap="wrap" component='form' onSubmit={handleSubmit}>
+                    <FormControl sx={{ minWidth: 150 }}>
+                        <InputLabel id='noteSubject'>Materia</InputLabel>
+                        <Select
+                            labelId='noteSubject'
+                            id='noteSubjectInput'
+                            label='Materia'
+                            onChange={e => setGetAssignment({ ...getAssignment, subjectId: Number(e.target.value) })}
+                            value={getAssignment.subjectId}
+                        >
+                            <MenuItem value={0}>-- Seleccione --</MenuItem>
+                            {subjects && subjects.map(subject => (
+                                <MenuItem key={subject.id} value={subject.id}>
+                                    {subject.nombre}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                    <FormControl sx={{ minWidth: 150 }}>
+                        <InputLabel id='noteCourse'>Curso</InputLabel>
+                        <Select
+                            labelId='noteCourse'
+                            id='noteCourseInput'
+                            label='Curso'
+                            onChange={e => setGetAssignment({ ...getAssignment, gradeId: Number(e.target.value) })}
+                            value={getAssignment.gradeId}
+                        >
+                            <MenuItem value={0}>-- Seleccione --</MenuItem>
+                            {grades && grades.map(course => (
+                                <MenuItem key={course.id} value={course.id}>
+                                    {course.descripcion}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                    <FormControl sx={{ minWidth: 150 }}>
+                        <InputLabel id='noteType'>Tipo</InputLabel>
+                        <Select
+                            labelId='noteType'
+                            id='noteTypeInput'
+                            label='Tipo'
+                            onChange={e => setGetAssignment({ ...getAssignment, type: e.target.value as AssignmentType })}
+                            value={getAssignment.type}
+                        >
+                            <MenuItem value={AssignmentType.Normal}>Normal</MenuItem>
+                            <MenuItem value={AssignmentType.Acumulativa}>Acumulativa</MenuItem>
+                            <MenuItem value={AssignmentType.Recuperación}>Recuperación</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <FormControl sx={{ minWidth: 150 }}>
+                        <InputLabel id='notePeriod'>Periodo</InputLabel>
+                        <Select
+                            labelId='notePeriod'
+                            id='notePeriodInput'
+                            label='Periodo'
+                            onChange={e => setGetAssignment({ ...getAssignment, period: e.target.value as AssignmentPeriod })}
+                            value={getAssignment.period}
+                        >
+                            <MenuItem value={AssignmentPeriod.First}>Primer periodo</MenuItem>
+                            <MenuItem value={AssignmentPeriod.Second}>Segundo periodo</MenuItem>
+                            <MenuItem value={AssignmentPeriod.Third}>Tercer periodo</MenuItem>
+                            <MenuItem value={AssignmentPeriod.Fourth}>Cuarto periodo</MenuItem>
+                            <MenuItem value={AssignmentPeriod.Fifth}>Quinto periodo</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <Button variant='contained' type='submit'>
+                        Consultar notas
+                    </Button>
+                </Stack>
+            </Container>
+            <TableContainer component={Paper} sx={{ marginTop: 8 }}>
+                <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell style={{ backgroundColor: theme.palette.primary.main, color: theme.palette.primary.contrastText }}>Descripción</TableCell>
+                            <TableCell style={{ backgroundColor: theme.palette.primary.main, color: theme.palette.primary.contrastText }} align="right">Porcentaje</TableCell>
+                            <TableCell style={{ backgroundColor: theme.palette.primary.main, color: theme.palette.primary.contrastText }} align="right">Periodo</TableCell>
+                            <TableCell style={{ backgroundColor: theme.palette.primary.main, color: theme.palette.primary.contrastText }} align="right">Tipo</TableCell>
+                            <TableCell style={{ backgroundColor: theme.palette.primary.main, color: theme.palette.primary.contrastText }} align="right">Calificación</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        <TableRow>
+                            <TableCell colSpan={5}>
+                                No se encontraron notas registradas
+                            </TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </section>
     )
 }
 

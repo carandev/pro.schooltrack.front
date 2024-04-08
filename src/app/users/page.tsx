@@ -1,4 +1,4 @@
-import { User } from "../types/types"
+import { User } from "../../types/User"
 
 const Users = async () => {
   let users: User[] = []

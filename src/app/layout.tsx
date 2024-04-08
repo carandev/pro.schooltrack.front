@@ -1,6 +1,6 @@
+import MiniDrawer from "@/components/MiniDrawer";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,28 +16,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={`${inter.className} flex`}>
-        <header className='h-screen bg-slate-500 text-white'>
-          <h1 className='bg-slate-600 p-4 uppercase text-center'>
-            {metadata.title?.toString()}
-          </h1>
-          <nav className='p-4 text-nowrap'>
-            <ul>
-              <li>
-                <a href="/">Inicio</a>
-              </li>
-              <li>
-                <a href="/assignments">Gestión de trabajos</a>
-              </li>
-              <li>
-                <a href="/students">Estudiantes</a>
-              </li>
-            </ul>
-          </nav>
-        </header>
-        <main className='p-4 w-full'>
+      <body className={inter.className}>
+        <MiniDrawer title={`${metadata.title?.toString()}`}>
           {children}
-        </main>
+        </MiniDrawer>
       </body>
     </html>
   );
