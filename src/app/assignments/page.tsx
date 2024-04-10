@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import {
     Button,
     Container,
@@ -18,7 +18,6 @@ import {
     useTheme
 } from "@mui/material"
 import { Subject } from "@/types/Subject"
-import { Course } from "@/types/Course"
 import { SubjectService } from "@/services/SubjectService"
 import { AssignmentPeriod, AssignmentType } from "@/types/Asignment"
 import { GetFilteredAssignments } from "./GetFilteredAssignments"
@@ -104,7 +103,7 @@ const Assignment = () => {
                         >
                             <MenuItem value={AssignmentType.Normal}>Normal</MenuItem>
                             <MenuItem value={AssignmentType.Acumulativa}>Acumulativa</MenuItem>
-                            <MenuItem value={AssignmentType.Recuperación}>Recuperación</MenuItem>
+                            <MenuItem value={AssignmentType.Resit}>Recuperación</MenuItem>
                         </Select>
                     </FormControl>
                     <FormControl sx={{ minWidth: 150 }}>

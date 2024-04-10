@@ -12,7 +12,7 @@ export interface Assignment {
 export enum AssignmentType {
     Normal = 10,
     Acumulativa = 20,
-    Recuperación = 30
+    Resit = 30
 }
 
 export enum AssignmentPeriod {
